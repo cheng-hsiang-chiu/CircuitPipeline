@@ -1,0 +1,8 @@
+read_celllib -early s510_Early.lib
+read_celllib -late s510_Late.lib
+read_verilog s510.v
+read_spef s510.spef
+read_sdc s510.sdc
+cppr -enable
+report_timing
+dump_graph

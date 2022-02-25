@@ -1,0 +1,8 @@
+read_celllib -early wb_dma_Early.lib
+read_celllib -late wb_dma_Late.lib
+read_verilog wb_dma.v
+read_spef wb_dma.spef
+read_timing wb_dma.timing
+report_timing
+cppr -enable
+dump_graph

@@ -1,0 +1,8 @@
+read_celllib -early des_perf_Early.lib
+read_celllib -late des_perf_Late.lib
+read_verilog des_perf.v
+read_spef des_perf.spef
+read_sdc des_perf.sdc
+cppr -enable
+report_timing
+dump_graph

@@ -1,0 +1,8 @@
+read_celllib -early usb_phy_ispd_Early.lib
+read_celllib -late usb_phy_ispd_Late.lib
+read_verilog usb_phy_ispd.v
+read_spef usb_phy_ispd.spef
+read_timing usb_phy_ispd.timing
+report_timing
+cppr -enable
+dump_graph

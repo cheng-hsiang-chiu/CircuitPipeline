@@ -1,0 +1,8 @@
+read_celllib -early tv80_Early.lib
+read_celllib -late tv80_Late.lib
+read_verilog tv80.v
+read_spef tv80.spef
+read_timing tv80.timing
+report_timing
+cppr -enable
+dump_graph

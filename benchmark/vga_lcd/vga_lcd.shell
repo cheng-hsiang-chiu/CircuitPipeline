@@ -1,0 +1,8 @@
+read_celllib -early vga_lcd_Early.lib
+read_celllib -late vga_lcd_Late.lib
+read_verilog vga_lcd.v
+read_spef vga_lcd.spef
+read_timing vga_lcd.timing
+report_timing
+cppr -enable
+dump_graph

@@ -1,0 +1,8 @@
+read_celllib -early s344_Early.lib
+read_celllib -late s344_Late.lib
+read_verilog s344.v
+read_spef s344.spef
+read_sdc s344.sdc
+cppr -enable
+report_timing
+dump_graph

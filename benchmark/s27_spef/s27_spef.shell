@@ -1,0 +1,8 @@
+read_celllib -early s27_spef_Early.lib
+read_celllib -late s27_spef_Late.lib
+read_verilog s27_spef.v
+read_spef s27_spef.spef
+read_sdc s27_spef.sdc
+cppr -enable
+report_timing
+dump_graph

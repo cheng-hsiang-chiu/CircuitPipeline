@@ -1,0 +1,8 @@
+read_celllib -early aes_core_Early.lib
+read_celllib -late aes_core_Late.lib
+read_verilog aes_core.v
+read_spef aes_core.spef
+read_sdc aes_core.sdc
+cppr -enable
+report_timing
+dump_graph
