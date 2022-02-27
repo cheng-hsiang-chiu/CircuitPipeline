@@ -1,0 +1,17 @@
+u1:a->u1:o
+inp1->u1:a
+inp2->u1:b
+u3:a->u3:o
+f1:ck->f1:d
+f1:ck->f1:q
+u2:a->u2:o
+u3:o->out
+u1:o->u4:a
+f1:q->u2:a
+f1:q->u4:b
+tau2015_clk->f1:ck
+u4:o->f1:d
+u1:b->u1:o
+u4:b->u4:o
+u4:a->u4:o
+u2:o->u3:a
