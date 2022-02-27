@@ -30,7 +30,7 @@ public:
 
     //_generate_statistics_file();
 
-    calculate_linear_chain();
+    find_linear_chain();
   }
 
   int get_number_edges() const {
@@ -41,7 +41,7 @@ public:
     return _num_vertices;
   }
 
-  void calculate_linear_chain() const;
+  void find_linear_chain() const;
 
 private:
   int _num_edges {0};
@@ -168,6 +168,7 @@ void Graph::_find_zero_in_edge(std::vector<std::string>& v) const {
   bool hit = false;
 
   for (auto& vertex : _vertices) {
+    hit = false;
     for (auto& [key, values] : _adjacency_list) {
       if (std::find(values.begin(), values.end(), vertex) != values.end()) {
         hit = true;
@@ -176,12 +177,11 @@ void Graph::_find_zero_in_edge(std::vector<std::string>& v) const {
     }
     if (!hit) {
       v.push_back(vertex);
-      hit = false;
     }
   }
 }
 
-void Graph::calculate_linear_chain() const {
+void Graph::find_linear_chain() const {
 
   // vertices of zero in edge
   std::vector<std::string> v_zero_in;
@@ -191,5 +191,4 @@ void Graph::calculate_linear_chain() const {
   for (auto& v: v_zero_in) {
     std::cout << v << '\n';
   }
-  std::cout << "what\n";
 }
