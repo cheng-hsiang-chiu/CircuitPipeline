@@ -192,17 +192,18 @@ int main() {
   }
 
   
-  //for (const auto& p : directories) {
-  //  Graph g{p};
-  //  std::cout << "directory = " << p << '\n';
-  //  std::cout << g.get_number_edges() << '\n';
-  //  std::cout << g.get_number_vertices() << '\n';
-  //}
+  for (const auto& p : directories) {
+    std::cout << "directory = " << p << '\n';
+    //std::cout << "what the hell\n";
+    Graph g{p};
+    std::cout << g.get_number_edges() << '\n';
+    std::cout << g.get_number_vertices() << '\n';
+  }
   
-  Graph g{directories[6]};
-  std::cout << "directory = " << directories[6] << '\n';
-  std::cout << g.get_number_edges() << '\n';
-  std::cout << g.get_number_vertices() << '\n';
+  //Graph g{"./s27"};
+  //std::cout << "directory = ./s27" << '\n';
+  //std::cout << g.get_number_edges() << '\n';
+  //std::cout << g.get_number_vertices() << '\n';
 
 
   return 0;

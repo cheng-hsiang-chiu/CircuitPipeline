@@ -6,7 +6,7 @@
 #include <set>
 #include <algorithm>
 #include <stack>
-#include <cassert>
+
 
 class Vertex {
 public:
@@ -58,8 +58,6 @@ public:
 
   void find_linear_chain();
 
-  void dump_stack(std::stack<int>) const;
-
 private:
   int _num_edges {0};
   
@@ -75,13 +73,13 @@ private:
   
   std::filesystem::path _statistics_path;
 
-  std::vector<Vertex> _vertices;
+  std::set<Vertex> _vertices;
   
   std::unordered_map<std::string, int> _name2id;
+    
+  std::unordered_map<std::string, std::set<std::string>> _adjacency_list;
   
-  std::unordered_map<int, std::set<int>> _adjacency_list;
-  
-  std::vector<std::vector<int>> _linear_chain;
+  std::vector<std::vector<std::string>> _linear_chain;
 
   void _build_adjacency_list();
     
@@ -91,9 +89,9 @@ private:
   
   void _generate_statistics_file();
 
-  void _find_zero_in_edge(std::vector<int>&);
+  void _find_zero_in_edge(std::vector<std::string>&) const;
 
-  //int _calculate_in_edge(std::string&) const;
+  int _calculate_in_edge(std::string&) const;
 };
 
 void Graph::_build_adjacency_list() {
@@ -103,7 +101,6 @@ void Graph::_build_adjacency_list() {
 
   std::string line;
   std::string delimiter = "\" -> \"";
-  int uid = 0;
  
   if (gfile.is_open()) {
     while (std::getline(gfile, line)) {
@@ -118,45 +115,17 @@ void Graph::_build_adjacency_list() {
         //std::cout << "token = " << token << std::endl;
         
         key = token.substr(3, token.length());
-        Vertex ktemp;
-        // key is not in the _name2id yet
-        if (_name2id.find(key) == _name2id.end()) {
-          ktemp.name = key;
-          _name2id[key] = uid;
-          assert(_vertices.size() == uid);
-          ++uid;
-          _vertices.push_back(ktemp);
+        if (_adjacency_list.find(key) == _adjacency_list.end()) {
+          _adjacency_list[key] = std::set<std::string>{};
         }
-        
-        //if (_adjacency_list.find(key) == _adjacency_list.end()) {
-        //  _adjacency_list[key] = std::set<std::string>{};
-        //}
 
         spos = epos + delimiter.length();
         epos = line.find(delimiter, spos);
         token = line.substr(spos, epos);
-        std::string value = token.substr(0, token.length()-2);
-        Vertex vtemp;
-       
-        // value is not in the _name2id yet 
-        if (_name2id.find(value) == _name2id.end()) {
-          assert(_vertices.size() == uid);
-          vtemp.name = value;
-          _name2id[value] = uid;
-          ++uid;
-          _vertices.push_back(vtemp);
-        }
+        _adjacency_list[key].insert(token.substr(0, token.length()-2));
 
-        int len1 = _adjacency_list[_name2id[key]].size();
-        _adjacency_list[_name2id[key]].insert(_name2id[value]);
-        if (_adjacency_list[_name2id[key]].size() != len1) {
-          ++_vertices[_name2id[value]].in_edge;
-          ++_vertices[_name2id[key]].out_edge;
-        }
-        //_adjacency_list[key].insert(token.substr(0, token.length()-2));
-
-        //_vertices.insert(key);
-        //_vertices.insert(token.substr(0, token.length()-2));
+        _vertices.insert(key);
+        _vertices.insert(token.substr(0, token.length()-2));
 
         break;
       }
@@ -168,32 +137,22 @@ void Graph::_build_adjacency_list() {
 
   gfile.close();
 
-  std::cout << "adjacency_list : \n";
   for (auto& [key, values] : _adjacency_list) {
-    //std::cout << _vertices[key].name << " -> ";
     for (auto& v : values) {
-      //std::cout << _vertices[v].name << ' ';
       ++_num_edges;
     }
-    //std::cout << '\n';
   }
   
   _num_vertices = _vertices.size();
-  //std::cout << "vertices = \n";
-  //for (auto& v : _vertices) {
-  //  std::cout << "name = " << v.name 
-  //            << " has in = " << v.in_edge 
-  //            << " and out = " << v.out_edge << '\n';
-  //}
 }
 
 void Graph::_generate_edge_file() {
   std::ofstream file;
   file.open(static_cast<std::string>(_edge_path));
-  
+
   for (auto& [key, values] : _adjacency_list) {
     for (auto& v : values) {
-      file << _vertices[key].name << "->" << _vertices[v].name << '\n';
+      file << key << "->" << v << '\n';
     }
   }
 
@@ -205,7 +164,7 @@ void Graph::_generate_vertex_file() {
   file.open(static_cast<std::string>(_vertex_path));
 
   for (auto& v : _vertices) {
-    file << v.name << '\n';
+    file << v << '\n';
   }
 
   file.close();
@@ -229,73 +188,67 @@ void Graph::_generate_statistics_file() {
 }
 
 
-void Graph::_find_zero_in_edge(std::vector<int>& v) {
-  //bool hit = false;
+void Graph::_find_zero_in_edge(std::vector<std::string>& v) const {
+  bool hit = false;
 
-  //for (auto& vertex : _vertices) {
-  //  std::cout << vertex << '\n';
-  //  hit = false;
-  //  for (auto& [key, values] : _adjacency_list) {
-  //    if (std::find(values.begin(), values.end(), vertex) != values.end()) {
-  //      hit = true;
-  //      break;
-  //    }
-  //  }
-  //  if (!hit) {
-  //    v.push_back(vertex);
-  //  }
-  //}
-  //
   for (auto& vertex : _vertices) {
-    if (vertex.in_edge == 0) {
-      v.push_back(_name2id[vertex.name]);
+    std::cout << vertex << '\n';
+    hit = false;
+    for (auto& [key, values] : _adjacency_list) {
+      if (std::find(values.begin(), values.end(), vertex) != values.end()) {
+        hit = true;
+        break;
+      }
+    }
+    if (!hit) {
+      v.push_back(vertex);
     }
   }
 }
 
-//int Graph::_calculate_in_edge(std::string& str) const {
-//  int in_edge = 0;
-//
-//  for (auto& [key, values] : _adjacency_list) {
-//    if (std::find(values.begin(), values.end(), str) != values.end()) {
-//      ++in_edge;
-//    }
-//  }
-//  return in_edge;
-//}
+int Graph::_calculate_in_edge(std::string& str) const {
+  int in_edge = 0;
 
-void Graph::dump_stack(std::stack<int> stk) const {
-  std::cout << "elements in stack : ";
-  while (!stk.empty()) {
-    std::cout << _vertices[stk.top()].name << ' ';
-    stk.pop();
+  for (auto& [key, values] : _adjacency_list) {
+    if (std::find(values.begin(), values.end(), str) != values.end()) {
+      ++in_edge;
+    }
   }
-  std::cout << '\n';
+  return in_edge;
 }
+
+//void dump_stack(std::stack<std::string> stk) {
+//  std::cout << "elements in stack : ";
+//  while (!stk.empty()) {
+//    std::cout << stk.top() << ' ';
+//    stk.pop();
+//  }
+//  std::cout << '\n';
+//}
 
 void Graph::find_linear_chain() {
   std::cout << "in find linear chain\n";
   // vertices of zero in edge
-  std::vector<int> v_zero_in;
+  std::vector<std::string> v_zero_in;
   _find_zero_in_edge(v_zero_in);
 
-  std::stack<int> stk; 
-  std::vector<int> visited;
+  std::stack<std::string> stk; 
+  std::vector<std::string> visited;
 
   for (auto& v : v_zero_in) {
     stk.push(v);
     visited.push_back(v);
   }
   
-  std::vector<int> lchain;
+  std::vector<std::string> lchain;
     
   while (!stk.empty()) {
     //dump_stack(stk);
 
-    int s = stk.top();
+    std::string s = stk.top();
     stk.pop();
-    // std::cout << s << '\n';
-    if (_vertices[s].in_edge > 1) {
+    std::cout << s << '\n';
+    if (_calculate_in_edge(s) > 1) {
       if (lchain.size() > 1) { 
         _linear_chain.push_back(lchain);
       }
@@ -312,15 +265,14 @@ void Graph::find_linear_chain() {
       lchain.clear();
     }
 
-    int child;
+    std::string child;
     // s has children
     while (_adjacency_list.find(s) != _adjacency_list.end()) {
       // has only one child
       if ((_adjacency_list[s]).size() == 1) {
         child = *(_adjacency_list[s].begin());
         // the child has more than one in_edge
-        if (_vertices[child].in_edge > 1) {
-        //if (_calculate_in_edge(child) > 1) {
+        if (_calculate_in_edge(child) > 1) {
           if (lchain.size() > 1) {
             _linear_chain.push_back(lchain);
           }
@@ -354,20 +306,15 @@ void Graph::find_linear_chain() {
         break;
       }
     }
-    if (_adjacency_list.find(s) == _adjacency_list.end()) {
-      if (lchain.size() > 1) { 
-        _linear_chain.push_back(lchain);
-      }
-      lchain.clear();
-    }
+
   }
    
   //std::cout << "linear chain :::\n"; 
   for (auto& chain : _linear_chain) {
     for (auto& c : chain) {
       ++_num_linear_chain;
-      //std::cout << _vertices[c].name << ' ';
+  //    std::cout << c << ' ';
     }
-    //std::cout << '\n';
+  //  std::cout << '\n';
   }
 }
