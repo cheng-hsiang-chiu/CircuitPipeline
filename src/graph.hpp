@@ -345,13 +345,13 @@ void Graph::find_linear_chain() {
   }
   
    
-  //std::cout << "linear chain :::\n"; 
+  std::cout << "linear chain :::\n"; 
   for (auto& chain : _linear_chain) {
     for (auto& c : chain) {
       ++_num_linear_chain;
-      //std::cout << _vertices[c].name << ' ';
+      std::cout << _vertices[c].name << ' ';
     }
-    //std::cout << '\n';
+    std::cout << '\n';
   }
 
   _avg_linear_chain_length = static_cast<double>(_num_linear_chain)/_linear_chain.size();
