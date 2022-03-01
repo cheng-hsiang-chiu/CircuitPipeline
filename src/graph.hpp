@@ -133,10 +133,6 @@ void Graph::_build_adjacency_list() {
           _vertices.push_back(ktemp);
         }
         
-        //if (_adjacency_list.find(key) == _adjacency_list.end()) {
-        //  _adjacency_list[key] = std::set<std::string>{};
-        //}
-
         spos = epos + delimiter.length();
         epos = line.find(delimiter, spos);
         token = line.substr(spos, epos);
@@ -158,10 +154,6 @@ void Graph::_build_adjacency_list() {
           ++_vertices[_name2id[value]].in_edge;
           ++_vertices[_name2id[key]].out_edge;
         }
-        //_adjacency_list[key].insert(token.substr(0, token.length()-2));
-
-        //_vertices.insert(key);
-        //_vertices.insert(token.substr(0, token.length()-2));
 
         break;
       }
@@ -237,22 +229,6 @@ void Graph::_generate_statistics_file() {
 
 
 void Graph::_find_zero_in_edge(std::vector<int>& v) {
-  //bool hit = false;
-
-  //for (auto& vertex : _vertices) {
-  //  std::cout << vertex << '\n';
-  //  hit = false;
-  //  for (auto& [key, values] : _adjacency_list) {
-  //    if (std::find(values.begin(), values.end(), vertex) != values.end()) {
-  //      hit = true;
-  //      break;
-  //    }
-  //  }
-  //  if (!hit) {
-  //    v.push_back(vertex);
-  //  }
-  //}
-  //
   for (auto& vertex : _vertices) {
     if (vertex.in_edge == 0) {
       v.push_back(_name2id[vertex.name]);
@@ -300,7 +276,7 @@ void Graph::find_linear_chain() {
 
     int s = stk.top();
     stk.pop();
-    // std::cout << s << '\n';
+    
     if (_vertices[s].in_edge > 1) {
       if (lchain.size() > 1) { 
         _linear_chain.push_back(lchain);
