@@ -108,7 +108,7 @@ void Graph::_build_adjacency_list() {
 
   std::string line;
   std::string delimiter = "\" -> \"";
-  int uid = 0;
+  size_t uid = 0;
  
   if (gfile.is_open()) {
     while (std::getline(gfile, line)) {
@@ -148,7 +148,7 @@ void Graph::_build_adjacency_list() {
           _vertices.push_back(vtemp);
         }
 
-        int len1 = _adjacency_list[_name2id[key]].size();
+        size_t len1 = _adjacency_list[_name2id[key]].size();
         _adjacency_list[_name2id[key]].insert(_name2id[value]);
         if (_adjacency_list[_name2id[key]].size() != len1) {
           ++_vertices[_name2id[value]].in_edge;

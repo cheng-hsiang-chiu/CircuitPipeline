@@ -1,0 +1,42 @@
+#IncludeRegexLine: ^[ 	]*[#%][ 	]*(include|import)[ 	]*[<"]([^">]+)([">])
+
+#IncludeRegexScan: ^.*$
+
+#IncludeRegexComplain: ^$
+
+#IncludeRegexTransform: 
+
+/home/chchiu/Documents/CircuitPipeline/CircuitPipeline/src/graph.hpp
+iostream
+-
+fstream
+-
+filesystem
+-
+string
+-
+unordered_map
+-
+set
+-
+algorithm
+-
+stack
+-
+cassert
+-
+
+/home/chchiu/Documents/CircuitPipeline/CircuitPipeline/src/report.cpp
+iostream
+-
+fstream
+-
+filesystem
+-
+string
+-
+vector
+-
+graph.hpp
+/home/chchiu/Documents/CircuitPipeline/CircuitPipeline/src/graph.hpp
+

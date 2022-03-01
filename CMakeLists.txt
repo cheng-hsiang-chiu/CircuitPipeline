@@ -75,9 +75,8 @@ message(STATUS "CP_BENCHMARK_DIR: ${CP_BENCHMARK_DIR}")
 # message(STATUS "OT_LICENSE: ${OT_LICENSE}")
 
 
-# add the binary tree to the search path for include files so we can find TutorialConfig.h
-# include_directories(${PROJECT_SOURCE_DIR})
-
+include_directories(${PROJECT_SOURCE_DIR})
+include_directories(${PROJECT_SOURCE_DIR}/3rd-party/)
 
 ###########################################################
 # Executables
@@ -96,7 +95,7 @@ message(STATUS "Building executables ...")
 ###########################################################
 
 
-add_executable(report ${CP_SOURCE_DIR}/report.cpp ${CP_SOURCE_DIR}/graph.hpp)
+add_executable(circuit_report ${CP_SOURCE_DIR}/circuit_report.cpp ${CP_SOURCE_DIR}/graph.hpp)
 #include_directories(${PROJECT_SOURCE_DIR}/benchmark)
 # # simple
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/simple)
