@@ -196,8 +196,13 @@ int main() {
     std::cout << "directory = " << p << '\n';
     //std::cout << "what the hell\n";
     Graph g{p};
-    std::cout << g.get_number_edges() << '\n';
-    std::cout << g.get_number_vertices() << '\n';
+    std::cout << "  |V| = " << g.get_number_vertices() << '\n';
+    std::cout << "  |E| = " << g.get_number_edges() << '\n';
+    std::cout << "  avg_length = " 
+              << g.get_average_linear_chain_length() << '\n';
+    std::cout << "  % = " 
+              << (100.0*g.get_number_linear_chain()/g.get_number_vertices()) 
+              << '\n';
   }
   
   //Graph g{"../benchmark/simple_6"};

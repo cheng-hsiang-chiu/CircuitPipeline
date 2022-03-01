@@ -173,7 +173,7 @@ void Graph::_build_adjacency_list() {
 
   gfile.close();
 
-  std::cout << "adjacency_list : \n";
+  //std::cout << "adjacency_list : \n";
   for (auto& [key, values] : _adjacency_list) {
     //std::cout << _vertices[key].name << " -> ";
     for (auto& v : values) {

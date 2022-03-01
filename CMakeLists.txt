@@ -64,10 +64,12 @@ message(STATUS "CMAKE_MODULE_PATH: ${CMAKE_MODULE_PATH}")
 # set(OT_VERSION "${OT_VERSION_MAJOR}.${OT_VERSION_MINOR}.${OT_VERSION_PATCH}")
 set(CP_HOME ${PROJECT_SOURCE_DIR})
 set(CP_BENCHMARK_DIR ${PROJECT_SOURCE_DIR}/benchmark)
+set(CP_SOURCE_DIR ${PROJECT_SOURCE_DIR}/src)
 #set(OT_UNITTEST_DIR ${PROJECT_SOURCE_DIR}/unittest)
 # set(OT_LICENSE ${PROJECT_SOURCE_DIR}/LICENSE)
 # message(STATUS "OT_VERSION: ${OT_VERSION}")
 message(STATUS "CP_HOME: ${CP_HOME}")
+message(STATUS "CP_SOURCE_DIR: ${CP_SOURCE_DIR}")
 message(STATUS "CP_BENCHMARK_DIR: ${CP_BENCHMARK_DIR}")
 # message(STATUS "OT_UNITTEST_DIR: ${OT_UNITTEST_DIR}")
 # message(STATUS "OT_LICENSE: ${OT_LICENSE}")
@@ -94,7 +96,7 @@ message(STATUS "Building executables ...")
 ###########################################################
 
 
-add_executable(report report.cpp graph.hpp)
+add_executable(report ${CP_SOURCE_DIR}/report.cpp ${CP_SOURCE_DIR}/graph.hpp)
 #include_directories(${PROJECT_SOURCE_DIR}/benchmark)
 # # simple
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/simple)
