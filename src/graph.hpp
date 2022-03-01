@@ -7,6 +7,8 @@
 #include <algorithm>
 #include <stack>
 #include <cassert>
+#include <limits>
+#include <cmath>
 
 class Vertex {
 public:
@@ -63,6 +65,18 @@ public:
     return _avg_linear_chain_length;
   }
 
+  int get_max_linear_chain_length() const {
+    return _max_linear_chain_length;
+  }
+
+  int get_min_linear_chain_length() const {
+    return _min_linear_chain_length;
+  }
+
+  double get_variance_linear_chain_length() const {
+    return _variance_linear_chain_length;
+  }
+
 private:
   int _num_edges {0};
   
@@ -71,6 +85,12 @@ private:
   int _num_linear_chain{0};
 
   double _avg_linear_chain_length{0.0};
+  
+  int _max_linear_chain_length{0};
+  
+  int _min_linear_chain_length{0};
+  
+  double _variance_linear_chain_length{0.0};
   
   std::filesystem::path _graph_path;
   
@@ -215,13 +235,19 @@ void Graph::_generate_statistics_file() {
        << std::setw(8)  << "|E|"
        << std::setw(8)  << "|P|"
        << std::setw(10) << "%" 
-       << std::setw(12) << "avg length" << '\n';
+       << std::setw(12) << "avg_length" 
+       << std::setw(12) << "max_length" 
+       << std::setw(12) << "min_length"
+       << std::setw(12) << "var_length" << '\n';
 
   file << std::setw(8)  << _num_vertices
        << std::setw(8)  << _num_edges
        << std::setw(8)  << _num_linear_chain
        << std::setw(10) << 100.0*_num_linear_chain/_num_vertices
        << std::setw(12) << _avg_linear_chain_length
+       << std::setw(12) << _max_linear_chain_length
+       << std::setw(12) << _min_linear_chain_length
+       << std::setw(12) << _variance_linear_chain_length
        << '\n';
 
   file.close();
@@ -349,10 +375,31 @@ void Graph::find_linear_chain() {
   for (auto& chain : _linear_chain) {
     for (auto& c : chain) {
       ++_num_linear_chain;
-      std::cout << _vertices[c].name << ' ';
+      //std::cout << _vertices[c].name << ' ';
     }
-    std::cout << '\n';
+    //std::cout << '\n';
   }
 
+  // calculate the average length of linear chain
   _avg_linear_chain_length = static_cast<double>(_num_linear_chain)/_linear_chain.size();
+
+  // calculate the maximum and minimum length of linear chain
+  int max = 0;
+  int min = std::numeric_limits<int>::max();
+
+  for (auto& chain : _linear_chain) {
+    //std::cout << "max = " << max << ", min = " << min << ", len = " << chain.size() << '\n';
+    max = max > chain.size() ? max : chain.size();
+    min = min < chain.size() ? min : chain.size();
+  }
+  _max_linear_chain_length = max;
+  _min_linear_chain_length = min;
+
+  // calculate the vaiance of length of linear chain
+  int difference = 0;
+  for (auto& chain : _linear_chain) {
+    difference += std::pow(chain.size() - _avg_linear_chain_length, 2);
+  }
+  _variance_linear_chain_length = static_cast<double>(difference) / _linear_chain.size(); 
 }
+

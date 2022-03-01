@@ -1,2 +1,2 @@
-     |V|     |E|     |P|         %  avg length
-     851    1036     527   61.9271     2.73057
+     |V|     |E|     |P|         %  avg_length  max_length  min_length  var_length
+     851    1036     527   61.9271     2.73057          11           2      2.5285
