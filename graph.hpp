@@ -36,12 +36,11 @@ public:
 
     find_linear_chain();
     
-    //_generate_edge_file();
+    _generate_edge_file();
 
-    //_generate_vertex_file();
+    _generate_vertex_file();
 
     _generate_statistics_file();
-
   }
 
   int get_number_edges() const {
@@ -60,6 +59,10 @@ public:
 
   void dump_stack(std::stack<int>) const;
 
+  double get_average_linear_chain_length() const {
+    return _avg_linear_chain_length;
+  }
+
 private:
   int _num_edges {0};
   
@@ -67,6 +70,8 @@ private:
 
   int _num_linear_chain{0};
 
+  double _avg_linear_chain_length{0.0};
+  
   std::filesystem::path _graph_path;
   
   std::filesystem::path _edge_path;
@@ -214,15 +219,17 @@ void Graph::_generate_vertex_file() {
 void Graph::_generate_statistics_file() {
   std::ofstream file;
   file.open(static_cast<std::string>(_statistics_path));
-  file << std::setw(8) << "|V|"
-       << std::setw(8) << "|E|"
-       << std::setw(8) << "|P|"
-       << std::setw(10) << "%" << '\n';
+  file << std::setw(8)  << "|V|"
+       << std::setw(8)  << "|E|"
+       << std::setw(8)  << "|P|"
+       << std::setw(10) << "%" 
+       << std::setw(12) << "avg length" << '\n';
 
-  file << std::setw(8) << _num_vertices
-       << std::setw(8) << _num_edges
-       << std::setw(8) << _num_linear_chain
+  file << std::setw(8)  << _num_vertices
+       << std::setw(8)  << _num_edges
+       << std::setw(8)  << _num_linear_chain
        << std::setw(10) << 100.0*_num_linear_chain/_num_vertices
+       << std::setw(12) << _avg_linear_chain_length
        << '\n';
 
   file.close();
@@ -274,7 +281,6 @@ void Graph::dump_stack(std::stack<int> stk) const {
 }
 
 void Graph::find_linear_chain() {
-  std::cout << "in find linear chain\n";
   // vertices of zero in edge
   std::vector<int> v_zero_in;
   _find_zero_in_edge(v_zero_in);
@@ -361,6 +367,7 @@ void Graph::find_linear_chain() {
       lchain.clear();
     }
   }
+  
    
   //std::cout << "linear chain :::\n"; 
   for (auto& chain : _linear_chain) {
@@ -370,4 +377,6 @@ void Graph::find_linear_chain() {
     }
     //std::cout << '\n';
   }
+
+  _avg_linear_chain_length = static_cast<double>(_num_linear_chain)/_linear_chain.size();
 }

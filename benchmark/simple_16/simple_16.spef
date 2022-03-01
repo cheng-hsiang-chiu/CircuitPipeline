@@ -1,0 +1,304 @@
+*SPEF "IEEE 1481-1998"
+*DESIGN "simple_2"
+*DATE "Tue Sep 25 11:51:50 2012"
+*VENDOR "TAU 2015 Contest"
+*PROGRAM "Benchmark Parasitic Generator"
+*VERSION "0.0"
+*DESIGN_FLOW "NETLIST_TYPE_VERILOG"
+*DIVIDER /
+*DELIMITER :
+*BUS_DELIMITER [ ]
+*T_UNIT 1 PS
+*C_UNIT 1 FF
+*R_UNIT 1 KOHM
+*L_UNIT 1 UH
+
+*D_NET inp1 5.4
+*CONN
+*P inp1 I
+*I u1:a I
+*CAP
+1 inp1 1.2
+2 inp1:1 1.3
+3 inp1:2 1.4
+4 u1:a 1.5
+*RES
+1 inp1 inp1:1 3.4
+2 inp1:1 inp1:2 3.5
+3 inp1:2 u1:a 3.6
+*END
+
+*D_NET inp2 2.0
+*CONN
+*P inp2 I
+*I u1:b I
+*CAP
+1 inp2 0.2
+2 inp2:1 0.5
+3 inp2:2 0.4
+4 u1:b 0.9
+*RES
+1 inp2 inp2:1 1.4
+2 inp2:1 inp2:2 1.5
+3 inp2:2 u1:b 1.6
+*END
+
+*D_NET out 0.7
+*CONN
+*I u19:o O
+*P out O
+*CAP
+1 u19:o 0.2
+2 out 0.5
+*RES
+1 u19:o out 1.4
+*END
+
+*D_NET n1 1.0
+*CONN
+*I u1:o O
+*I u4:a I
+*CAP
+1 u1:o 0.2
+1 n1:1 0.3
+2 u4:a 0.5
+*RES
+1 u1:o n1:1 1.1
+2 n1:1 u4:a 1.0
+*END
+
+*D_NET n2 1.2
+*CONN
+*I u4:o O
+*I f1:d I
+*CAP
+1 u4:o 0.7
+2 f1:d 0.5
+*RES
+1 u4:o f1:d 2.1
+*END
+
+*D_NET n3 23.4
+*CONN
+*I f1:q O
+*I u2:a I
+*I u4:b I
+*CAP
+1 n3:1 6.7
+2 n3:2 7.8
+3 n3:3 8.9
+*RES
+1 f1:q n3:3 1.2
+2 n3:3 n3:1 2.3
+3 n3:1 u2:a 3.4
+4 n3:3 n3:2 4.5
+5 n3:2 u4:b 5.6
+*END
+
+*D_NET n4 1.0
+*CONN
+*I u2:o O
+*I u3:a I
+*CAP
+1 u2:o 0.2
+1 n4:1 0.3
+2 u3:a 0.5
+*RES
+1 u2:o n4:1 1.1
+2 n4:1 u3:a 1.0
+*END
+
+*D_NET n5 1.0
+*CONN
+*I u3:o O
+*I u5:a I
+*CAP
+1 u3:o 0.2
+1 n5:1 0.3
+2 u5:a 0.5
+*RES
+1 u3:o n5:1 1.1
+2 n5:1 u5:a 1.0
+*END
+
+*D_NET n6 1.0
+*CONN
+*I u5:o O
+*I u6:a I
+*CAP
+1 u5:o 0.2
+1 n6:1 0.3
+2 u6:a 0.5
+*RES
+1 u5:o n6:1 1.1
+2 n6:1 u6:a 1.0
+*END
+
+*D_NET n7 1.0
+*CONN
+*I u6:o O
+*I u7:a I
+*CAP
+1 u6:o 0.2
+1 n7:1 0.3
+2 u7:a 0.5
+*RES
+1 u6:o n7:1 1.1
+2 n7:1 u7:a 1.0
+*END
+
+*D_NET n8 1.0
+*CONN
+*I u7:o O
+*I u8:a I
+*CAP
+1 u7:o 0.2
+1 n8:1 0.3
+2 u8:a 0.5
+*RES
+1 u7:o n8:1 1.1
+2 n8:1 u8:a 1.0
+*END
+
+*D_NET n9 1.0
+*CONN
+*I u8:o O
+*I u9:a I
+*CAP
+1 u8:o 0.2
+1 n9:1 0.3
+2 u9:a 0.5
+*RES
+1 u8:o n9:1 1.1
+2 n9:1 u9:a 1.0
+*END
+
+*D_NET n10 1.0
+*CONN
+*I u9:o O
+*I u10:a I
+*CAP
+1 u9:o 0.2
+1 n10:1 0.3
+2 u10:a 0.5
+*RES
+1 u9:o n10:1 1.1
+2 n10:1 u10:a 1.0
+*END
+
+*D_NET n11 1.0
+*CONN
+*I u10:o O
+*I u11:a I
+*CAP
+1 u10:o 0.2
+1 n11:1 0.3
+2 u11:a 0.5
+*RES
+1 u10:o n11:1 1.1
+2 n11:1 u11:a 1.0
+*END
+
+*D_NET n12 1.0
+*CONN
+*I u11:o O
+*I u12:a I
+*CAP
+1 u11:o 0.2
+1 n12:1 0.3
+2 u12:a 0.5
+*RES
+1 u11:o n12:1 1.1
+2 n12:1 u12:a 1.0
+*END
+
+*D_NET n13 1.0
+*CONN
+*I u12:o O
+*I u13:a I
+*CAP
+1 u12:o 0.2
+1 n13:1 0.3
+2 u13:a 0.5
+*RES
+1 u12:o n13:1 1.1
+2 n13:1 u13:a 1.0
+*END
+
+*D_NET n14 1.0
+*CONN
+*I u13:o O
+*I u14:a I
+*CAP
+1 u13:o 0.2
+1 n14:1 0.3
+2 u14:a 0.5
+*RES
+1 u13:o n14:1 1.1
+2 n14:1 u14:a 1.0
+*END
+
+*D_NET n15 1.0
+*CONN
+*I u14:o O
+*I u15:a I
+*CAP
+1 u14:o 0.2
+1 n15:1 0.3
+2 u15:a 0.5
+*RES
+1 u14:o n15:1 1.1
+2 n15:1 u15:a 1.0
+*END
+
+*D_NET n16 1.0
+*CONN
+*I u15:o O
+*I u16:a I
+*CAP
+1 u15:o 0.2
+1 n16:1 0.3
+2 u16:a 0.5
+*RES
+1 u15:o n16:1 1.1
+2 n16:1 u16:a 1.0
+*END
+
+*D_NET n17 1.0
+*CONN
+*I u16:o O
+*I u17:a I
+*CAP
+1 u16:o 0.2
+1 n17:1 0.3
+2 u17:a 0.5
+*RES
+1 u16:o n17:1 1.1
+2 n17:1 u17:a 1.0
+*END
+
+*D_NET n18 1.0
+*CONN
+*I u17:o O
+*I u18:a I
+*CAP
+1 u17:o 0.2
+1 n18:1 0.3
+2 u18:a 0.5
+*RES
+1 u17:o n18:1 1.1
+2 n18:1 u18:a 1.0
+*END
+
+*D_NET n19 1.0
+*CONN
+*I u18:o O
+*I u19:a I
+*CAP
+1 u18:o 0.2
+1 n19:1 0.3
+2 u19:a 0.5
+*RES
+1 u18:o n19:1 1.1
+2 n19:1 u19:a 1.0
+*END

@@ -182,7 +182,7 @@ int main() {
   std::vector<std::filesystem::path> directories;
 
   // get sub-directories of non-combination circuits in current directory
-  for (const auto& entry : std::filesystem::directory_iterator("./")) {
+  for (const auto& entry : std::filesystem::directory_iterator("../benchmark")) {
     if (std::filesystem::is_directory(entry.path()) && 
         static_cast<std::string>(entry.path())[2] != 'c') {
       directories.push_back(entry.path());
@@ -200,10 +200,11 @@ int main() {
     std::cout << g.get_number_vertices() << '\n';
   }
   
-  //Graph g{"./s27"};
-  //std::cout << "directory = ./s27" << '\n';
+  //Graph g{"../benchmark/simple_6"};
+  //std::cout << "directory = ../benchmark/simple_6" << '\n';
   //std::cout << g.get_number_edges() << '\n';
   //std::cout << g.get_number_vertices() << '\n';
+  //std::cout << g.get_average_linear_chain_length() << '\n';
 
 
   return 0;

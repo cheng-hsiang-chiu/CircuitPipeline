@@ -1,0 +1,8 @@
+read_celllib -early simple_8_Early.lib
+read_celllib -late simple_8_Late.lib
+read_verilog simple_8.v
+read_spef simple_8.spef
+read_sdc simple_8.sdc
+cppr -enable
+report_timing
+dump_graph

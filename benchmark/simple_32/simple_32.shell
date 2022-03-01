@@ -1,0 +1,8 @@
+read_celllib -early simple_32_Early.lib
+read_celllib -late simple_32_Late.lib
+read_verilog simple_32.v
+read_spef simple_32.spef
+read_sdc simple_32.sdc
+cppr -enable
+report_timing
+dump_graph
