@@ -52,11 +52,13 @@ int main() {
   
   Graph g{benchmark};
   
-  std::unordered_map<int, std::set<int>> adjacency_list = g.get_adjacency_list();
+  std::vector<std::vector<int>> adjacency_list = g.get_adjacency_list();
+  //std::unordered_map<int, std::set<int>> adjacency_list = g.get_adjacency_list();
 
   int number_vertices = g.get_number_vertices();
    
-  std::array<tf::Task, 10000> tasks;
+  std::vector<tf::Task> tasks;
+  tasks.resize(number_vertices);
    
   tf::Executor executor;
   tf::Taskflow taskflow;
@@ -72,29 +74,14 @@ int main() {
       }).name(std::to_string(i));
   }
 
-  for (auto& [key, values] : adjacency_list) {
+  //for (auto& [key, values] : adjacency_list) {
+  //  for (auto& value : values) {
+  //    tasks[key].precede(tasks[value]);
+  //  }
+  //}
 
-    //tasks[key] = 
-    //  taskflow.emplace([&key, time1, time2, time3, time4, time5]() { 
-    //    //std::cout << "parent  = " << key << '\n'; 
-    //    task1(time1);
-    //    task2(time2);
-    //    task3(time3);
-    //    task4(time4);
-    //    task5(time5);
-    //  }).name(std::to_string(key));
-
-    for (auto& value : values) {
-      //tasks[value] = 
-      //  taskflow.emplace([&value, time1, time2, time3, time4, time5](){
-      //    //std::cout << "child = " << value << '\n';  
-      //    task1(time1);
-      //    task2(time2);
-      //    task3(time3);
-      //    task4(time4);
-      //    task5(time5);
-      //  }).name(std::to_string(value));  
-
+  for (int key = 0; key < adjacency_list.size(); ++key) {
+    for (auto& value : adjacency_list[key]) {
       tasks[key].precede(tasks[value]);
     }
   }

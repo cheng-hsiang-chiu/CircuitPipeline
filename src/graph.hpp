@@ -35,7 +35,9 @@ public:
 
     _statistics_path = path / path.filename();
     _statistics_path += ".statistics";
-     
+
+    _adjacency_list.resize(10000);
+         
     _build_adjacency_list();
 
     find_linear_chain();
@@ -83,8 +85,16 @@ public:
     const int num_vertices,
     const int length);
 
-  std::unordered_map<int, std::set<int>> get_adjacency_list() const {
+  //std::unordered_map<int, std::set<int>> get_adjacency_list() const {
+  //  return _adjacency_list;
+  //}
+
+  std::vector<std::vector<int>> get_adjacency_list() const {
     return _adjacency_list;
+  }
+
+  std::vector<std::vector<int>> get_linear_chain() const {
+    return _linear_chain;
   }
 
 private:
@@ -114,7 +124,9 @@ private:
   
   std::unordered_map<std::string, int> _name2id;
   
-  std::unordered_map<int, std::set<int>> _adjacency_list;
+  //std::unordered_map<int, std::set<int>> _adjacency_list;
+  
+  std::vector<std::vector<int>> _adjacency_list;
   
   std::vector<std::vector<int>> _linear_chain;
 
@@ -178,12 +190,22 @@ void Graph::_build_adjacency_list() {
           _vertices.push_back(vtemp);
         }
 
-        size_t len1 = _adjacency_list[_name2id[key]].size();
-        _adjacency_list[_name2id[key]].insert(_name2id[value]);
-        if (_adjacency_list[_name2id[key]].size() != len1) {
+        //size_t len1 = _adjacency_list[_name2id[key]].size();
+        //_adjacency_list[_name2id[key]].insert(_name2id[value]);
+
+        if (std::find(
+            _adjacency_list[_name2id[key]].begin(),
+            _adjacency_list[_name2id[key]].end(),
+            _name2id[value]) == _adjacency_list[_name2id[key]].end()) {
+          _adjacency_list[_name2id[key]].push_back(_name2id[value]);
           ++_vertices[_name2id[value]].in_edge;
           ++_vertices[_name2id[key]].out_edge;
         }
+
+        //if (_adjacency_list[_name2id[key]].size() != len1) {
+        //  ++_vertices[_name2id[value]].in_edge;
+        //  ++_vertices[_name2id[key]].out_edge;
+        //}
 
         break;
       }
@@ -196,13 +218,22 @@ void Graph::_build_adjacency_list() {
   gfile.close();
 
   //std::cout << "adjacency_list : \n";
-  for (auto& [key, values] : _adjacency_list) {
-    //std::cout << _vertices[key].name << " -> ";
-    for (auto& v : values) {
-      //std::cout << _vertices[v].name << ' ';
+  //for (auto& [key, values] : _adjacency_list) {
+  //  //std::cout << _vertices[key].name << " -> ";
+  //  for (auto& v : values) {
+  //    //std::cout << _vertices[v].name << ' ';
+  //    ++_num_edges;
+  //  }
+  //  //std::cout << '\n';
+  //}
+ 
+  for (auto& lists : _adjacency_list) {
+    if (lists.size() == 0) {
+      continue;
+    }
+    for (auto& l : lists) {
       ++_num_edges;
     }
-    //std::cout << '\n';
   }
   
   _num_vertices = _vertices.size();
@@ -218,11 +249,18 @@ void Graph::_generate_edge_file() {
   std::ofstream file;
   file.open(static_cast<std::string>(_edge_path));
   
-  for (auto& [key, values] : _adjacency_list) {
-    for (auto& v : values) {
+  //for (auto& [key, values] : _adjacency_list) {
+  //  for (auto& v : values) {
+  //    file << _vertices[key].name << "->" << _vertices[v].name << '\n';
+  //  }
+  //}
+
+  for (int key = 0; key < _adjacency_list.size(); ++key) {
+    for (auto& v : _adjacency_list[key]) {
       file << _vertices[key].name << "->" << _vertices[v].name << '\n';
     }
   }
+
 
   file.close();
 }
@@ -323,7 +361,8 @@ void Graph::find_linear_chain() {
     lchain.push_back(s);
 
     // s has no child
-    if (_adjacency_list.find(s) == _adjacency_list.end()) {
+    if (_adjacency_list[s].size() == 0) {
+    //if (_adjacency_list.find(s) == _adjacency_list.end()) {
       if (lchain.size() > 1) { 
         _linear_chain.push_back(lchain);
       }
@@ -332,10 +371,12 @@ void Graph::find_linear_chain() {
 
     int child;
     // s has children
-    while (_adjacency_list.find(s) != _adjacency_list.end()) {
+    while (_adjacency_list[s].size() > 0) {
+    //while (_adjacency_list.find(s) != _adjacency_list.end()) {
       // has only one child
       if ((_adjacency_list[s]).size() == 1) {
-        child = *(_adjacency_list[s].begin());
+        child = _adjacency_list[s][0];
+        //child = *(_adjacency_list[s].begin());
         // the child has more than one in_edge
         if (_vertices[child].in_edge > 1) {
         //if (_calculate_in_edge(child) > 1) {
@@ -372,7 +413,8 @@ void Graph::find_linear_chain() {
         break;
       }
     }
-    if (_adjacency_list.find(s) == _adjacency_list.end()) {
+    if (_adjacency_list[s].size() == 0) {
+    //if (_adjacency_list.find(s) == _adjacency_list.end()) {
       if (lchain.size() > 1) { 
         _linear_chain.push_back(lchain);
       }
@@ -455,7 +497,9 @@ void Graph::generate_new_graph(
   
   std::unordered_map<std::string, int> new_name2id{_name2id};
   
-  std::unordered_map<int, std::set<int>> new_adjacency_list{_adjacency_list};
+  //std::unordered_map<int, std::set<int>> new_adjacency_list{_adjacency_list};
+  
+  std::vector<std::vector<int>> new_adjacency_list{_adjacency_list};
   
   std::vector<std::vector<int>> new_linear_chain{_linear_chain};
  
@@ -471,7 +515,7 @@ void Graph::generate_new_graph(
   for (auto& idx : index) {
     std::string newname = "thisisdummy:" + std::to_string(counts_added++); 
     for (auto& child : _adjacency_list[idx]) {
-      new_adjacency_list[newid].insert(child);
+      new_adjacency_list[newid].push_back(child);
     }
 
     Vertex newv;
@@ -482,7 +526,7 @@ void Graph::generate_new_graph(
     new_name2id[newname] = newid;
 
     new_adjacency_list[idx].clear();
-    new_adjacency_list[idx].insert(newid++);
+    new_adjacency_list[idx].push_back(newid++);
 
     new_vertices[idx].out_edge = 1;
 
@@ -494,10 +538,11 @@ void Graph::generate_new_graph(
       temp.out_edge = 1;
       new_vertices.push_back(temp);
       new_name2id[newname] = newid;
-      int original_child = *(new_adjacency_list[idx].begin());
+      int original_child = new_adjacency_list[idx][0];
+      //int original_child = *(new_adjacency_list[idx].begin());
       new_adjacency_list[idx].clear();
-      new_adjacency_list[idx].insert(newid);
-      new_adjacency_list[newid++].insert(original_child);
+      new_adjacency_list[idx].push_back(newid);
+      new_adjacency_list[newid++].push_back(original_child);
     }
   }
 
