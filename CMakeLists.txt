@@ -78,6 +78,15 @@ message(STATUS "CP_BENCHMARK_DIR: ${CP_BENCHMARK_DIR}")
 include_directories(${PROJECT_SOURCE_DIR})
 include_directories(${PROJECT_SOURCE_DIR}/3rd-party/)
 
+find_package(Threads REQUIRED)
+#set(THREADS_PREFER_PTHREAD_FLAG ON)
+
+list(APPEND CP_LINK_FLAGS "")
+list(APPEND CP_LINK_FLAGS Threads::Threads)
+#list(APPEND CP_LINK_FLAGS stdc++fs)
+message(STATUS "CP_LINK_FLAGS: ${CP_LINK_FLAGS}")
+
+
 ###########################################################
 # Executables
 ###########################################################
@@ -96,6 +105,11 @@ message(STATUS "Building executables ...")
 
 
 add_executable(circuit_report ${CP_SOURCE_DIR}/circuit_report.cpp ${CP_SOURCE_DIR}/graph.hpp)
+add_executable(circuit_generator ${CP_SOURCE_DIR}/circuit_generator.cpp ${CP_SOURCE_DIR}/graph.hpp)
+add_executable(circuit_taskflow ${CP_SOURCE_DIR}/circuit_taskflow.cpp ${CP_SOURCE_DIR}/graph.hpp)
+
+target_link_libraries(circuit_taskflow ${CP_LINK_FLAGS})
+
 #include_directories(${PROJECT_SOURCE_DIR}/benchmark)
 # # simple
 # set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${PROJECT_SOURCE_DIR}/example/simple)

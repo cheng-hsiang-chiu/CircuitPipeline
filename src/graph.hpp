@@ -9,6 +9,8 @@
 #include <cassert>
 #include <limits>
 #include <cmath>
+#include <ctime>
+
 
 class Vertex {
 public:
@@ -75,6 +77,14 @@ public:
 
   double get_variance_linear_chain_length() const {
     return _variance_linear_chain_length;
+  }
+
+  void generate_new_graph(
+    const int num_vertices,
+    const int length);
+
+  std::unordered_map<int, std::set<int>> get_adjacency_list() const {
+    return _adjacency_list;
   }
 
 private:
@@ -401,5 +411,107 @@ void Graph::find_linear_chain() {
     difference += std::pow(chain.size() - _avg_linear_chain_length, 2);
   }
   _variance_linear_chain_length = static_cast<double>(difference) / _linear_chain.size(); 
+
+  // calculate the percentage of length with >= 4 and >= 8
+  int cnt4 = 0;
+  int cnt8 = 0;
+
+  for (auto& chain : _linear_chain) {
+    if (chain.size() >= 4) {
+      ++cnt4;
+    }
+    if (chain.size() >= 8) {
+      ++cnt8;
+    }
+  }
+  
+  std::cout << ">=4 has count = " << cnt4 << " and % = " << (400.0*cnt4/_num_vertices) << '\n';
+  std::cout << ">=8 has count = " << cnt8 << " and % = " << (800.0*cnt8/_num_vertices) << '\n';
+
 }
 
+
+//std::vector<int> Graph::_find_parents(const int vertex) {
+//  std::vector<int> parents;
+//
+//  for (auto& [key, values] : _adjacency_list) {
+//    if (std::find(values.begin(), values.end(), str) != values.end()) {
+//      parents.push_back(key);
+//    }
+//  }
+//
+//  return parents;
+//}
+
+
+
+void Graph::generate_new_graph(
+  const int num_vertices,
+  const int length) {
+  
+  std::srand(std::time(nullptr));
+  
+  std::vector<Vertex> new_vertices{_vertices};
+  
+  std::unordered_map<std::string, int> new_name2id{_name2id};
+  
+  std::unordered_map<int, std::set<int>> new_adjacency_list{_adjacency_list};
+  
+  std::vector<std::vector<int>> new_linear_chain{_linear_chain};
+ 
+  std::set<int> index;
+  
+  int counts_added = 0;
+  int newid = _num_vertices;
+
+  while (index.size() < num_vertices) {
+    index.insert(std::rand()%_num_vertices);
+  }
+     
+  for (auto& idx : index) {
+    std::string newname = "thisisdummy:" + std::to_string(counts_added++); 
+    for (auto& child : _adjacency_list[idx]) {
+      new_adjacency_list[newid].insert(child);
+    }
+
+    Vertex newv;
+    newv.name = newname;
+    newv.in_edge = 1;
+    newv.out_edge = _adjacency_list[idx].size();
+    new_vertices.push_back(newv);
+    new_name2id[newname] = newid;
+
+    new_adjacency_list[idx].clear();
+    new_adjacency_list[idx].insert(newid++);
+
+    new_vertices[idx].out_edge = 1;
+
+    for (int i = 2; i < length; ++i) { 
+      Vertex temp;
+      newname = "thisisdummy:" + std::to_string(counts_added++); 
+      temp.name = newname;
+      temp.in_edge = 1;
+      temp.out_edge = 1;
+      new_vertices.push_back(temp);
+      new_name2id[newname] = newid;
+      int original_child = *(new_adjacency_list[idx].begin());
+      new_adjacency_list[idx].clear();
+      new_adjacency_list[idx].insert(newid);
+      new_adjacency_list[newid++].insert(original_child);
+    }
+  }
+
+  _adjacency_list = new_adjacency_list;
+  _name2id = new_name2id;
+  _vertices = new_vertices;
+  _linear_chain.clear();
+  _num_edges += (length-1);
+  _num_vertices += (length-1);
+  _num_linear_chain = 0;
+  find_linear_chain();
+  _generate_edge_file();
+
+  _generate_vertex_file();
+
+  _generate_statistics_file();
+}
