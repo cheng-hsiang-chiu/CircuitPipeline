@@ -106,7 +106,7 @@ int main() {
 
   int number_vertices = g.get_number_vertices();
    
-  std::array<tf::Task, 10000> tasks;
+  std::vector<tf::Task> tasks(number_vertices);
   
   std::vector<bool> visited(linear_chain.size());
   std::vector<int> lc2sps(number_vertices);
