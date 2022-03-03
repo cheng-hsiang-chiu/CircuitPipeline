@@ -40,8 +40,8 @@ int main() {
   //}
  
   
-  std::cout << "processing directory = ../benchmark/s526_design10" << '\n';
   std::string p = "../benchmark/s526_design10";
+  std::cout << "processing directory = " << p << '\n';
   Graph g{p};
   std::cout << "  |V| = " << g.get_number_vertices() << '\n';
   std::cout << "  |E| = " << g.get_number_edges() << '\n';

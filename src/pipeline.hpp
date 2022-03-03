@@ -22,9 +22,10 @@ int is_linear_chain(const int candidate,
   return -1;
 }
 
-void circuit_pipeline(
+std::chrono::microseconds circuit_pipeline(
   const std::string benchmark,
-  const std::vector<size_t>& time_array) {
+  const std::vector<size_t>& time_array,
+  const size_t threshold) {
 
   Graph g{benchmark};
   
@@ -81,7 +82,7 @@ void circuit_pipeline(
     // vertex in a linear chain and is the head of the chain
     // construct a pipeline task
     // index is the index in the linear_chain
-    if (index != -1) { 
+    if (index != -1 && linear_chain[index].size() >= threshold) { 
       if (visited[index] == false) {
         visited[index] = true;
 
@@ -111,7 +112,7 @@ void circuit_pipeline(
 
   for (int key = 0; key < adjacency_list.size(); ++key) {
     int index = is_linear_chain(key, linear_chain);
-    if (index != -1) {
+    if (index != -1 && linear_chain[index].size() >= threshold) {
       if (built[linear_chain[index][0]] == false) {
         int head = linear_chain[index][0];
         int tail = linear_chain[index][linear_chain[index].size()-1];
@@ -128,21 +129,21 @@ void circuit_pipeline(
       tasks[key].precede(tasks[value]);
     }
   }
-  
+  //taskflow.dump(std::cout); 
+  auto beg = std::chrono::high_resolution_clock::now();
   executor.run(taskflow).wait();
+  auto end = std::chrono::high_resolution_clock::now();
+  return std::chrono::duration_cast<std::chrono::microseconds>(end-beg);
 }
 
-void circuit_pipeline() {
-  std::cout << "this is a test\n";
-}
+//void circuit_pipeline() {
+//  std::cout << "this is a test\n";
+//}
 
 std::chrono::microseconds measure_time_pipeline(
   const std::string benchmark,
-  const std::vector<size_t>& time_array){
-  auto beg = std::chrono::high_resolution_clock::now();
-  circuit_pipeline(benchmark, time_array);
-  //circuit_pipeline();
-  auto end = std::chrono::high_resolution_clock::now();
+  const std::vector<size_t>& time_array,
+  const size_t threshold){
   
-  return std::chrono::duration_cast<std::chrono::microseconds>(end - beg);
+  return circuit_pipeline(benchmark, time_array, threshold);
 }

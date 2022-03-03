@@ -14,31 +14,31 @@ int main(int argc, char* argv[]) {
   CLI::App app{"Circuit Pipeline"};
 
   unsigned design {0};
-  app.add_option("-d,--design", design, "the benchmark id (default=0), 0-10 only");
+  app.add_option("-b,--benchmark", design, "the benchmark id (default=0), 0-10 only");
 
-  //size_t time1 = 1736;
-  size_t time1 = 0;
+  size_t time1 = 1736*4;
+  //size_t time1 = 0;
   app.add_option("--time1", time1, "the sleep time for task1 (default=1736ns)");
 
-  //size_t time2 = 288;
-  size_t time2 = 0;
+  size_t time2 = 288*4;
+  //size_t time2 = 0;
   app.add_option("--time2", time2, "the sleep time for task2 (default=288ns)");
   
-  //size_t time3 = 206;
-  size_t time3 = 0;
+  size_t time3 = 206*4;
+  //size_t time3 = 0;
   app.add_option("--time3", time3, "the sleep time for task3 (default=206ns)");
 
-  //size_t time4 = 55;
-  size_t time4 = 0;
+  size_t time4 = 55*4;
+  //size_t time4 = 0;
   app.add_option("--time4", time4, "the sleep time for task4 (default=55ns)");
   
-  //size_t time5 = 1235;
-  size_t time5 = 0;
+  size_t time5 = 1235*4;
+  //size_t time5 = 0;
   app.add_option("--time5", time5, "the sleep time for task5 (default=1235ns)");
   
-  size_t threshold = 8;
-  app.add_option("--threshold", threshold, 
-                 "the threshold of length of linear chain (default=8)");
+  size_t threshold = 2;
+  app.add_option("-t,--threshold", threshold, 
+                 "the threshold of length of linear chain (default=2)");
 
   size_t num_rounds = 1;
   app.add_option("-r,--rounds", num_rounds, "the round of executions (default=1)");
@@ -76,20 +76,20 @@ int main(int argc, char* argv[]) {
       runtime += measure_time_taskflow(path, time_array).count();
     }
     else {
-      runtime += measure_time_pipeline(path, time_array).count();
+      runtime += measure_time_pipeline(path, time_array, threshold).count();
     }
   }
 
   std::cout << std::setw(6) << "Model"
             << std::setw(14) << "Benchmark"
             << std::setw(8) << "Rounds"
-            << std::setw(14) << "Runtime (ms)"
+            << std::setw(14) << "Runtime (us)"
             << std::endl;
 
   std::cout << std::setw(6) << model
             << std::setw(14) << benchmark
             << std::setw(8) << num_rounds
-            << std::setw(14) << runtime / num_rounds / 1e3
+            << std::setw(14) << runtime / num_rounds
             << std::endl;
 
 

@@ -10,7 +10,7 @@ void task(const size_t t) {
   std::this_thread::sleep_for(std::chrono::nanoseconds(t));
 }
 
-void circuit_taskflow(
+std::chrono::microseconds circuit_taskflow(
   const std::string benchmark,
   const std::vector<size_t>& time_array) {
 
@@ -44,21 +44,20 @@ void circuit_taskflow(
     }
   }
 
+  //taskflow.dump(std::cout);
   // run the executor
+  auto beg = std::chrono::high_resolution_clock::now();
   executor.run(taskflow).wait();
+  auto end = std::chrono::high_resolution_clock::now();
+  return std::chrono::duration_cast<std::chrono::microseconds>(end - beg);
 }
 
-void circuit_taskflow() {
-  std::cout << "this is a test\n";
-}
+//void circuit_taskflow() {
+//  std::cout << "this is a test\n";
+//}
 
 std::chrono::microseconds measure_time_taskflow(
   const std::string benchmark,
   const std::vector<size_t>& time_array){
-  auto beg = std::chrono::high_resolution_clock::now();
-  circuit_taskflow(benchmark, time_array);
-  //circuit_taskflow();
-  auto end = std::chrono::high_resolution_clock::now();
-  
-  return std::chrono::duration_cast<std::chrono::microseconds>(end - beg);
+  return circuit_taskflow(benchmark, time_array);
 }

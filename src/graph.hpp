@@ -299,7 +299,21 @@ void Graph::_generate_statistics_file() {
        << std::setw(12) << _max_linear_chain_length
        << std::setw(12) << _min_linear_chain_length
        << std::setw(12) << _variance_linear_chain_length
-       << '\n';
+       << "\n\n\n";
+
+  std::unordered_map<int, int> lc;
+  for (auto& chain : _linear_chain) {
+    ++lc[chain.size()];
+  }
+
+  file << std::setw(8) << "Length"
+       << std::setw(8) << "Counts" << '\n';
+
+  for (auto& [key, value] : lc) {
+    file << std::setw(8) << key 
+         << std::setw(8) << value
+         << '\n'; 
+  }
 
   file.close();
 }
@@ -460,18 +474,21 @@ void Graph::find_linear_chain() {
   // calculate the percentage of length with >= 4 and >= 8
   int cnt4 = 0;
   int cnt8 = 0;
-
+  int len4 = 0;
+  int len8 = 0;
   for (auto& chain : _linear_chain) {
     if (chain.size() >= 4) {
       ++cnt4;
+      len4 += chain.size();
     }
     if (chain.size() >= 8) {
       ++cnt8;
+      len8 += chain.size();
     }
   }
   
-  std::cout << ">=4 has count = " << cnt4 << " and % = " << (400.0*cnt4/_num_vertices) << '\n';
-  std::cout << ">=8 has count = " << cnt8 << " and % = " << (800.0*cnt8/_num_vertices) << '\n';
+  std::cout << ">=4 has count = " << cnt4 << " and % = " << (100.0*len4/_num_vertices) << '\n';
+  std::cout << ">=8 has count = " << cnt8 << " and % = " << (100.0*len8/_num_vertices) << '\n';
 
 }
 

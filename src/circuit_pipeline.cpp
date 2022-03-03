@@ -64,44 +64,69 @@ struct other_pipe {
 };
 
 
-int main() {
+int main(int argc, char* argv[]) {
 
   CLI::App app{"Circuit Pipeline"};
 
-  std::string benchmark = "../benchmark/s526_design10";
-  app.add_option("-b, --benchmark", benchmark, "the benchmark (default=s526)");
+  size_t design = 0;
+  app.add_option("-b, --benchmark", design, "the benchmark id (default=0)");
 
-  //size_t time1 = 1736;
-  size_t time1 = 0;
+  size_t time1 = 1736*4;
+  //size_t time1 = 0;
   app.add_option("--time1", time1, "the sleep time for task1 (default=1736ns)");
 
-  //size_t time2 = 288;
-  size_t time2 = 0;
+  size_t time2 = 288*4;
+  //size_t time2 = 0;
   app.add_option("--time2", time2, "the sleep time for task2 (default=288ns)");
   
-  //size_t time3 = 206;
-  size_t time3 = 0;
+  size_t time3 = 206*4;
+  //size_t time3 = 0;
   app.add_option("--time3", time3, "the sleep time for task3 (default=206ns)");
 
-  //size_t time4 = 55;
-  size_t time4 = 0;
+  size_t time4 = 55*4;
+  //size_t time4 = 0;
   app.add_option("--time4", time4, "the sleep time for task4 (default=55ns)");
   
-  //size_t time5 = 1235;
-  size_t time5 = 0;
+  size_t time5 = 1235*4;
+  //size_t time5 = 0;
   app.add_option("--time5", time5, "the sleep time for task5 (default=1235ns)");
   
-  size_t threshold = 8;
-  app.add_option("--threshold", threshold, 
-                 "the threshold of length of linear chain (default=8)");
+  size_t threshold = 2;
+  app.add_option("-t, --threshold", threshold, 
+                 "the threshold of length of linear chain (default=2)");
 
-  std::array<size_t, 5> time_array;
-  time_array[0] = time1;
-  time_array[1] = time2;
-  time_array[2] = time3;
-  time_array[3] = time4;
-  time_array[4] = time5;
+  CLI11_PARSE(app, argc, argv);
+  
+  std::vector<size_t> time_array;
+  time_array.push_back(time1);
+  time_array.push_back(time2);
+  time_array.push_back(time3);
+  time_array.push_back(time4);
+  time_array.push_back(time5);
+  time_array.push_back(time1);
+  time_array.push_back(time2);
+  time_array.push_back(time3);
+  time_array.push_back(time4);
+  time_array.push_back(time5);
+  time_array.push_back(time1);
+  time_array.push_back(time2);
+  time_array.push_back(time3);
+  time_array.push_back(time4);
+  time_array.push_back(time5);
+  time_array.push_back(time1);
+  time_array.push_back(time2);
+  time_array.push_back(time3);
+  time_array.push_back(time4);
+  time_array.push_back(time5);
 
+  std::string benchmark = "../benchmark/s526";
+  if (design > 0) {
+    benchmark = benchmark + "_design";
+    benchmark = benchmark + std::to_string(design);
+  }
+  
+  std::cout << "benchmark = " << benchmark << ", threshold = " << threshold << '\n';
+  
   Graph g{benchmark};
   
   std::vector<std::vector<int>> adjacency_list = g.get_adjacency_list();
@@ -146,8 +171,8 @@ int main() {
   
 
   std::vector< tf::Pipe<std::function<void(tf::Pipeflow&)>> > pipes;
-  // 5 pipes
-  for(size_t i = 0; i < 5; i++) {
+  // 15 pipes
+  for(size_t i = 0; i < 20; i++) {
     pipes.emplace_back(tf::PipeType::SERIAL, pipe_callable);
   }
 
@@ -161,7 +186,7 @@ int main() {
     // vertex in a linear chain and is the head of the chain
     // construct a pipeline task
     // index is the index in the linear_chain
-    if (index != -1) { 
+    if (index != -1 && linear_chain[index].size() >= threshold) { 
       if (visited[index] == false) {
         visited[index] = true;
 
@@ -192,6 +217,21 @@ int main() {
           pipe_work(time_array[2]);
           pipe_work(time_array[3]);
           pipe_work(time_array[4]);
+          pipe_work(time_array[5]);
+          pipe_work(time_array[6]);
+          pipe_work(time_array[7]);
+          pipe_work(time_array[8]);
+          pipe_work(time_array[9]);
+          pipe_work(time_array[10]);
+          pipe_work(time_array[11]);
+          pipe_work(time_array[12]);
+          pipe_work(time_array[13]);
+          pipe_work(time_array[14]);
+          pipe_work(time_array[15]);
+          pipe_work(time_array[16]);
+          pipe_work(time_array[17]);
+          pipe_work(time_array[18]);
+          pipe_work(time_array[19]);
         }).name(std::to_string(i));
     }
   }
@@ -201,7 +241,7 @@ int main() {
   for (int key = 0; key < adjacency_list.size(); ++key) {
   //for (auto& [key, values] : adjacency_list) {
     int index = is_linear_chain(key, linear_chain);
-    if (index != -1) {
+    if (index != -1 && linear_chain[index].size() >= threshold) {
       if (built[linear_chain[index][0]] == false) {
         int head = linear_chain[index][0];
         int tail = linear_chain[index][linear_chain[index].size()-1];
