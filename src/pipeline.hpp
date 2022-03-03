@@ -1,33 +1,14 @@
+#include <iostream>
+#include <chrono>
 #include <taskflow/taskflow.hpp>
 #include <taskflow/algorithm/pipeline.hpp>
 #include "graph.hpp"
-#include <CLI11/CLI11.hpp>
-#include <unordered_map>
-#include <set>
-#include <string>
-#include <chrono>
+#include <vector>
 #include <thread>
-
 
 void pipe_work(const size_t t) {
   std::this_thread::sleep_for(std::chrono::nanoseconds(t));
 }
-
-//void pipe_work2(const size_t t) {
-//  std::this_thread::sleep_for(std::chrono::nanoseconds(t));
-//}
-//
-//void pipe_work3(const size_t t) {
-//  std::this_thread::sleep_for(std::chrono::nanoseconds(t));
-//}
-//
-//void pipe_work4(const size_t t) {
-//  std::this_thread::sleep_for(std::chrono::nanoseconds(t));
-//}
-//
-//void pipe_work5(const size_t t) {
-//  std::this_thread::sleep_for(std::chrono::nanoseconds(t));
-//}
 
 int is_linear_chain(const int candidate, 
   std::vector<std::vector<int>>& linear_chain) {
@@ -41,71 +22,13 @@ int is_linear_chain(const int candidate,
   return -1;
 }
 
-struct first_pipe {
-  size_t num_lines;
-  size_t stime;
-
-  void operator()(tf::Pipeflow& pf) {
-    if (pf.token() >= num_lines) {
-      pf.stop();
-    }
-    else {
-      pipe_work(stime);
-    }
-  }
-};
-
-struct other_pipe {
-  size_t stime;
-
-  void operator()(tf::Pipeflow& pf) {
-    pipe_work(stime);
-  }
-};
-
-
-int main() {
-
-  CLI::App app{"Circuit Pipeline"};
-
-  std::string benchmark = "../benchmark/s526_design10";
-  app.add_option("-b, --benchmark", benchmark, "the benchmark (default=s526)");
-
-  //size_t time1 = 1736;
-  size_t time1 = 0;
-  app.add_option("--time1", time1, "the sleep time for task1 (default=1736ns)");
-
-  //size_t time2 = 288;
-  size_t time2 = 0;
-  app.add_option("--time2", time2, "the sleep time for task2 (default=288ns)");
-  
-  //size_t time3 = 206;
-  size_t time3 = 0;
-  app.add_option("--time3", time3, "the sleep time for task3 (default=206ns)");
-
-  //size_t time4 = 55;
-  size_t time4 = 0;
-  app.add_option("--time4", time4, "the sleep time for task4 (default=55ns)");
-  
-  //size_t time5 = 1235;
-  size_t time5 = 0;
-  app.add_option("--time5", time5, "the sleep time for task5 (default=1235ns)");
-  
-  size_t threshold = 8;
-  app.add_option("--threshold", threshold, 
-                 "the threshold of length of linear chain (default=8)");
-
-  std::array<size_t, 5> time_array;
-  time_array[0] = time1;
-  time_array[1] = time2;
-  time_array[2] = time3;
-  time_array[3] = time4;
-  time_array[4] = time5;
+void circuit_pipeline(
+  const std::string benchmark,
+  const std::vector<size_t>& time_array) {
 
   Graph g{benchmark};
   
   std::vector<std::vector<int>> adjacency_list = g.get_adjacency_list();
-  //std::unordered_map<int, std::set<int>> adjacency_list = g.get_adjacency_list();
 
   std::vector<std::vector<int>> linear_chain = g.get_linear_chain();
 
@@ -114,7 +37,6 @@ int main() {
   std::vector<tf::Task> tasks(number_vertices);
   
   std::vector<bool> visited(linear_chain.size());
-  std::vector<int> lc2sps(number_vertices);
   
   size_t num_lines = 0; 
     
@@ -151,9 +73,7 @@ int main() {
     pipes.emplace_back(tf::PipeType::SERIAL, pipe_callable);
   }
 
-  //std::vector<tf::ScalablePipeline<decltype(pipes)::iterator>> sps;
   std::list<tf::ScalablePipeline<decltype(pipes)::iterator>> sps;
-
 
   for (int i = 0; i < number_vertices; ++i) {
     int index = is_linear_chain(i, linear_chain);
@@ -167,16 +87,7 @@ int main() {
 
         num_lines = linear_chain[index].size(); 
              
-        //tf::ScalablePipeline pl(num_lines, pipes.begin(), pipes.end());
         auto& sp = sps.emplace_back(num_lines, pipes.begin(), pipes.end());
-        //lc2sps[linear_chain[index][0]] = sps.size()-1;
-        //std::cout << "sps.size()-1 = " << sps.size() - 1 << " , linear_chain[index][0] = " << linear_chain[index][0] << '\n';
-        //std::cout << "lc2sps["<<linear_chain[index][0] <<"] = " << lc2sps[linear_chain[index][0]] << '\n';
-        //std::cout << "lc2sps.size() = " << lc2sps.size() << '\n';
-        
-        //tasks[linear_chain[index][0]] 
-        //  = taskflow.composed_of(sps[lc2sps[linear_chain[index][0]]])
-        //            .name(std::to_string(linear_chain[index][0]));
         tasks[linear_chain[index][0]] 
           = taskflow.composed_of(sp);
       }
@@ -199,7 +110,6 @@ int main() {
   std::vector<bool> built(number_vertices);
 
   for (int key = 0; key < adjacency_list.size(); ++key) {
-  //for (auto& [key, values] : adjacency_list) {
     int index = is_linear_chain(key, linear_chain);
     if (index != -1) {
       if (built[linear_chain[index][0]] == false) {
@@ -219,16 +129,20 @@ int main() {
     }
   }
   
-  taskflow.dump(std::cout);
-  auto beg = std::chrono::high_resolution_clock::now();
   executor.run(taskflow).wait();
-  auto end = std::chrono::high_resolution_clock::now();
-  
-  std::cout << "elapsed time = " 
-            << std::chrono::duration_cast<std::chrono::microseconds>(end-beg).count() 
-            << "ms\n";
-  
-  return 0;
 }
 
+void circuit_pipeline() {
+  std::cout << "this is a test\n";
+}
 
+std::chrono::microseconds measure_time_pipeline(
+  const std::string benchmark,
+  const std::vector<size_t>& time_array){
+  auto beg = std::chrono::high_resolution_clock::now();
+  circuit_pipeline(benchmark, time_array);
+  //circuit_pipeline();
+  auto end = std::chrono::high_resolution_clock::now();
+  
+  return std::chrono::duration_cast<std::chrono::microseconds>(end - beg);
+}

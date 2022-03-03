@@ -32,23 +32,30 @@ int main() {
 
   CLI::App app{"Circuit Taskflow"};
 
-  std::string benchmark = "../benchmark/s526";
+  //std::string benchmark = "../benchmark/s526";
+  std::string benchmark = "../benchmark/s526_design10";
+
   app.add_option("-b, --benchmark", benchmark, "the benchmark (default=s526)");
 
-  size_t time1 = 100;
-  app.add_option("--time1", time1, "the sleep time for task1 (default=100ns)");
+  //size_t time1 = 1736;
+  size_t time1 = 0;
+  app.add_option("--time1", time1, "the sleep time for task1 (default=1736ns)");
 
-  size_t time2 = 100;
-  app.add_option("--time2", time2, "the sleep time for task2 (default=100ns)");
+  //size_t time2 = 288;
+  size_t time2 = 0;
+  app.add_option("--time2", time2, "the sleep time for task2 (default=288ns)");
   
-  size_t time3 = 100;
-  app.add_option("--time3", time3, "the sleep time for task3 (default=100ns)");
+  //size_t time3 = 206;
+  size_t time3 = 0;
+  app.add_option("--time3", time3, "the sleep time for task3 (default=206ns)");
 
-  size_t time4 = 100;
-  app.add_option("--time4", time4, "the sleep time for task4 (default=100ns)");
+  //size_t time4 = 55;
+  size_t time4 = 0;
+  app.add_option("--time4", time4, "the sleep time for task4 (default=55ns)");
   
-  size_t time5 = 100;
-  app.add_option("--time5", time5, "the sleep time for task5 (default=100ns)");
+  //size_t time5 = 1235;
+  size_t time5 = 0;
+  app.add_option("--time5", time5, "the sleep time for task5 (default=1235ns)");
   
   Graph g{benchmark};
   

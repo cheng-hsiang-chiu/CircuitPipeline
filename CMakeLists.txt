@@ -108,9 +108,11 @@ add_executable(circuit_report ${CP_SOURCE_DIR}/circuit_report.cpp ${CP_SOURCE_DI
 add_executable(circuit_generator ${CP_SOURCE_DIR}/circuit_generator.cpp ${CP_SOURCE_DIR}/graph.hpp)
 add_executable(circuit_taskflow ${CP_SOURCE_DIR}/circuit_taskflow.cpp ${CP_SOURCE_DIR}/graph.hpp)
 add_executable(circuit_pipeline ${CP_SOURCE_DIR}/circuit_pipeline.cpp ${CP_SOURCE_DIR}/graph.hpp)
+add_executable(run ${CP_SOURCE_DIR}/main.cpp ${CP_SOURCE_DIR}/taskflow.hpp ${CP_SOURCE_DIR}/pipeline.hpp ${CP_SOURCE_DIR}/graph.hpp)
 
 target_link_libraries(circuit_taskflow ${CP_LINK_FLAGS})
 target_link_libraries(circuit_pipeline ${CP_LINK_FLAGS})
+target_link_libraries(run ${CP_LINK_FLAGS})
 
 #include_directories(${PROJECT_SOURCE_DIR}/benchmark)
 # # simple

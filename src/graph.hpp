@@ -1,3 +1,6 @@
+#ifndef _GRAPH_HPP
+#define _GRAPH_HPP
+
 #include <iostream>
 #include <fstream>
 #include <filesystem>
@@ -511,9 +514,12 @@ void Graph::generate_new_graph(
   while (index.size() < num_vertices) {
     index.insert(std::rand()%_num_vertices);
   }
+
+
      
   for (auto& idx : index) {
     std::string newname = "thisisdummy:" + std::to_string(counts_added++); 
+    std::cout << "chosedn index = " << idx << ", newname = " << newname << '\n';
     for (auto& child : _adjacency_list[idx]) {
       new_adjacency_list[newid].push_back(child);
     }
@@ -550,8 +556,8 @@ void Graph::generate_new_graph(
   _name2id = new_name2id;
   _vertices = new_vertices;
   _linear_chain.clear();
-  _num_edges += (length-1);
-  _num_vertices += (length-1);
+  _num_edges = _num_edges + (length-1) * num_vertices;
+  _num_vertices = _num_vertices + (length-1) * num_vertices;
   _num_linear_chain = 0;
   find_linear_chain();
   _generate_edge_file();
@@ -560,3 +566,9 @@ void Graph::generate_new_graph(
 
   _generate_statistics_file();
 }
+
+
+
+
+
+#endif

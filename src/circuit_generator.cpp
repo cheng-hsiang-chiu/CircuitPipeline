@@ -36,8 +36,8 @@ int main(int argc, char* argv[]) {
  
   // std::cout << counts_vertices << " , " << length << '\n'; 
   
-  std::cout << "generating benchmark in directory = ../benchmark/s526_design1" << '\n';
-  std::string p = "../benchmark/s526_design1";
+  std::cout << "generating benchmark in directory = ../benchmark/s526_design10" << '\n';
+  std::string p = "../benchmark/s526_design10";
   Graph g{p};
 
   g.generate_new_graph(counts_vertices, length);
